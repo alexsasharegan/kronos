@@ -24,6 +24,16 @@ const enum T {
   Week = T.Day * 7,
 }
 
+const enum StringTag {
+  Microsecond = "Microsecond",
+  Millisecond = "Millisecond",
+  Second = "Second",
+  Minute = "Minute",
+  Hour = "Hour",
+  Day = "Day",
+  Week = "Week",
+}
+
 export type Interval = {
   /**
    * Indicates the Interval unit base.
@@ -80,9 +90,11 @@ export type Interval = {
    * Custom primitive type casting behavior.
    */
   valueOf(): number;
+  [Symbol.toPrimitive](hint: string): number | string;
+  [Symbol.toStringTag]: StringTag;
 };
 
-export type CreateInterval = (value: number) => Interval;
+export type CreateInterval = (value?: number) => Interval;
 
 const unitLabels = {
   verbose: {
@@ -105,32 +117,34 @@ const unitLabels = {
   },
 };
 
-export const Microsecond: CreateInterval = (n) => Interval(n, U.Microsecond);
-export const Millisecond: CreateInterval = (n) => Interval(n, U.Millisecond);
-export const Second: CreateInterval = (n) => Interval(n, U.Second);
-export const Minute: CreateInterval = (n) => Interval(n, U.Minute);
-export const Hour: CreateInterval = (n) => Interval(n, U.Hour);
-export const Day: CreateInterval = (n) => Interval(n, U.Day);
-export const Week: CreateInterval = (n) => Interval(n, U.Week);
+export const Microsecond: CreateInterval = (n = 0) =>
+  Interval(n, U.Microsecond);
+export const Millisecond: CreateInterval = (n = 0) =>
+  Interval(n, U.Millisecond);
+export const Second: CreateInterval = (n = 0) => Interval(n, U.Second);
+export const Minute: CreateInterval = (n = 0) => Interval(n, U.Minute);
+export const Hour: CreateInterval = (n = 0) => Interval(n, U.Hour);
+export const Day: CreateInterval = (n = 0) => Interval(n, U.Day);
+export const Week: CreateInterval = (n = 0) => Interval(n, U.Week);
 
 function Interval(value: number, unit: U): Interval {
   if (Number.isNaN(value)) {
     throw new TypeError(`Cannot create an Interval from NaN`);
   }
 
-  return {
+  const interval: Interval = {
     unit,
     value,
 
     map: (op) => Interval(op(value), unit),
 
-    toMicroseconds: () => Microsecond((value * t(unit)) / T.Microsecond),
-    toMilliseconds: () => Millisecond((value * t(unit)) / T.Millisecond),
-    toSeconds: () => Second((value * t(unit)) / T.Second),
-    toMinutes: () => Minute((value * t(unit)) / T.Minute),
-    toHours: () => Hour((value * t(unit)) / T.Hour),
-    toDays: () => Day((value * t(unit)) / T.Day),
-    toWeeks: () => Week((value * t(unit)) / T.Week),
+    toMicroseconds: () => Microsecond((value * base(unit)) / T.Microsecond),
+    toMilliseconds: () => Millisecond((value * base(unit)) / T.Millisecond),
+    toSeconds: () => Second((value * base(unit)) / T.Second),
+    toMinutes: () => Minute((value * base(unit)) / T.Minute),
+    toHours: () => Hour((value * base(unit)) / T.Hour),
+    toDays: () => Day((value * base(unit)) / T.Day),
+    toWeeks: () => Week((value * base(unit)) / T.Week),
 
     toString(options = {}) {
       const mode = options.mode || "verbose";
@@ -150,13 +164,26 @@ function Interval(value: number, unit: U): Interval {
     },
 
     valueOf: () => value,
+    [Symbol.toPrimitive]: (hint: any) => {
+      switch (hint) {
+        case "string":
+          return interval.toString();
+        case "number":
+        case "default":
+        default:
+          return value;
+      }
+    },
+    [Symbol.toStringTag]: tag(unit),
   };
+
+  return interval;
 }
 
 /**
  * Convert a unit into a time base.
  */
-function t(unit: U): T {
+function base(unit: U): T {
   switch (unit) {
     case U.Microsecond:
       return T.Microsecond;
@@ -178,5 +205,30 @@ function t(unit: U): T {
 
     case U.Week:
       return T.Week;
+  }
+}
+
+function tag(unit: U): StringTag {
+  switch (unit) {
+    case U.Microsecond:
+      return StringTag.Microsecond;
+
+    case U.Millisecond:
+      return StringTag.Millisecond;
+
+    case U.Second:
+      return StringTag.Second;
+
+    case U.Minute:
+      return StringTag.Minute;
+
+    case U.Hour:
+      return StringTag.Hour;
+
+    case U.Day:
+      return StringTag.Day;
+
+    case U.Week:
+      return StringTag.Week;
   }
 }

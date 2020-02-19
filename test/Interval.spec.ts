@@ -145,3 +145,50 @@ for (const { interval, table, label } of RootTestTable) {
     }
   });
 }
+
+test("Interval type coercion", () => {
+  // unequal
+  expect(Day(7) == Week(1).toDays()).toBe(false);
+  // Loosely equal
+  expect(+Day(7) === +Week(1).toDays()).toBe(true);
+
+  {
+    const dayInWks: any = Day(1).toWeeks();
+    const t = Week(1).map((n) => n + dayInWks);
+    const d = t.toDays();
+    expect(d.value).toBe(8);
+  }
+});
+
+describe("Symbol.toStringTag", () => {
+  const tt = [
+    [Microsecond(), "[object Microsecond]"],
+    [Millisecond(), "[object Millisecond]"],
+    [Second(), "[object Second]"],
+    [Minute(), "[object Minute]"],
+    [Hour(), "[object Hour]"],
+    [Day(), "[object Day]"],
+    [Week(), "[object Week]"],
+  ] as const;
+
+  const StringTag = Object.prototype.toString;
+
+  for (const [interval, tag] of tt) {
+    test(tag, () => {
+      expect(StringTag.call(interval)).toBe(tag);
+    });
+  }
+});
+
+describe("Default initializers", () => {
+  const tt = [Microsecond, Millisecond, Second, Minute, Hour, Day, Week];
+
+  const StringTag = Object.prototype.toString;
+
+  for (const Interval of tt) {
+    test(Interval.name, () => {
+      expect(Interval).not.toThrow();
+      expect(Interval().value).toBe(0);
+    });
+  }
+});
