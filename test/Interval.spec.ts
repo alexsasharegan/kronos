@@ -183,8 +183,6 @@ describe("Symbol.toStringTag", () => {
 describe("Default initializers", () => {
   const tt = [Microsecond, Millisecond, Second, Minute, Hour, Day, Week];
 
-  const StringTag = Object.prototype.toString;
-
   for (const Interval of tt) {
     test(Interval.name, () => {
       expect(Interval).not.toThrow();
