@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Day Day#toString: Day abbreviated 1`] = `"1d"`;
+
+exports[`Day Day#toString: Day default 1`] = `"1 day"`;
+
+exports[`Day Day#toString: Day verbose 1`] = `"1 day"`;
+
+exports[`Hour Hour#toString: Hour abbreviated 1`] = `"1hr"`;
+
+exports[`Hour Hour#toString: Hour default 1`] = `"1 hour"`;
+
+exports[`Hour Hour#toString: Hour verbose 1`] = `"1 hour"`;
+
+exports[`Microsecond Microsecond#toString: Microsecond abbreviated 1`] = `"1µs"`;
+
+exports[`Microsecond Microsecond#toString: Microsecond default 1`] = `"1 microsecond"`;
+
+exports[`Microsecond Microsecond#toString: Microsecond verbose 1`] = `"1 microsecond"`;
+
+exports[`Millisecond Millisecond#toString: Millisecond abbreviated 1`] = `"1ms"`;
+
+exports[`Millisecond Millisecond#toString: Millisecond default 1`] = `"1 millisecond"`;
+
+exports[`Millisecond Millisecond#toString: Millisecond verbose 1`] = `"1 millisecond"`;
+
+exports[`Minute Minute#toString: Minute abbreviated 1`] = `"1min"`;
+
+exports[`Minute Minute#toString: Minute default 1`] = `"1 minute"`;
+
+exports[`Minute Minute#toString: Minute verbose 1`] = `"1 minute"`;
+
+exports[`Second Second#toString: Second abbreviated 1`] = `"1sec"`;
+
+exports[`Second Second#toString: Second default 1`] = `"1 second"`;
+
+exports[`Second Second#toString: Second verbose 1`] = `"1 second"`;
+
+exports[`Week Week#toString: Week abbreviated 1`] = `"1wk"`;
+
+exports[`Week Week#toString: Week default 1`] = `"1 week"`;
+
+exports[`Week Week#toString: Week verbose 1`] = `"1 week"`;

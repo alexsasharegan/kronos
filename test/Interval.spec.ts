@@ -114,6 +114,20 @@ const RootTestTable = [
 
 for (const { interval, table, label } of RootTestTable) {
   describe(label, () => {
+    test(`${label}#valueOf`, () => {
+      expect(interval.valueOf()).toBe(interval.value);
+      expect(+interval).toBe(interval.value);
+    });
+    test(`${label}#toString`, () => {
+      expect(interval.toString()).toMatchSnapshot(`${label} default`);
+      expect(interval.toString({ mode: "abbreviated" })).toMatchSnapshot(
+        `${label} abbreviated`
+      );
+      expect(interval.toString({ mode: "verbose" })).toMatchSnapshot(
+        `${label} verbose`
+      );
+    });
+
     const tt = [
       { actual: interval.toMicroseconds(), expected: table.Microsecond },
       { actual: interval.toMilliseconds(), expected: table.Millisecond },

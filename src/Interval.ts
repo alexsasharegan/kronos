@@ -1,4 +1,7 @@
-const enum Unit {
+/**
+ * Unit of time `U`.
+ */
+const enum U {
   Microsecond = 1,
   Millisecond,
   Second,
@@ -8,6 +11,9 @@ const enum Unit {
   Week,
 }
 
+/**
+ * Time units `T` in milliseconds.
+ */
 const enum T {
   Millisecond = 1,
   Microsecond = T.Millisecond / 1000,
@@ -22,7 +28,7 @@ export type Interval = {
   /**
    * Indicates the Interval unit base.
    */
-  readonly unit: Unit;
+  readonly unit: U;
   /**
    * The raw value of the Interval.
    */
@@ -32,7 +38,7 @@ export type Interval = {
    * Perform a transform on the raw value
    * returning a new Interval of the same Unit.
    */
-  map(op: (value: number) => number): Interval;
+  map(operation: (value: number) => number): Interval;
 
   /**
    * Returns the Interval converted to microseconds.
@@ -63,42 +69,51 @@ export type Interval = {
    */
   toWeeks(): Interval;
 
-  toString(options?: { mode?: keyof typeof unitLabels }): string;
+  /**
+   * Custom string coercion behavior.
+   */
+  toString(options?: {
+    mode?: keyof typeof unitLabels;
+    separator?: string;
+  }): string;
+  /**
+   * Custom primitive type casting behavior.
+   */
   valueOf(): number;
 };
 
-export type IntervalCtor = (value: number) => Interval;
+export type CreateInterval = (value: number) => Interval;
 
 const unitLabels = {
   verbose: {
-    [Unit.Microsecond]: "microsecond",
-    [Unit.Millisecond]: "millisecond",
-    [Unit.Second]: "second",
-    [Unit.Minute]: "minute",
-    [Unit.Hour]: "hour",
-    [Unit.Day]: "day",
-    [Unit.Week]: "week",
+    [U.Microsecond]: "microsecond",
+    [U.Millisecond]: "millisecond",
+    [U.Second]: "second",
+    [U.Minute]: "minute",
+    [U.Hour]: "hour",
+    [U.Day]: "day",
+    [U.Week]: "week",
   },
   abbreviated: {
-    [Unit.Microsecond]: "µs",
-    [Unit.Millisecond]: "ms",
-    [Unit.Second]: "s",
-    [Unit.Minute]: "m",
-    [Unit.Hour]: "h",
-    [Unit.Day]: "d",
-    [Unit.Week]: "wk",
+    [U.Microsecond]: "µs",
+    [U.Millisecond]: "ms",
+    [U.Second]: "sec",
+    [U.Minute]: "min",
+    [U.Hour]: "hr",
+    [U.Day]: "d",
+    [U.Week]: "wk",
   },
 };
 
-export const Microsecond: IntervalCtor = (n) => Interval(n, Unit.Microsecond);
-export const Millisecond: IntervalCtor = (n) => Interval(n, Unit.Millisecond);
-export const Second: IntervalCtor = (n) => Interval(n, Unit.Second);
-export const Minute: IntervalCtor = (n) => Interval(n, Unit.Minute);
-export const Hour: IntervalCtor = (n) => Interval(n, Unit.Hour);
-export const Day: IntervalCtor = (n) => Interval(n, Unit.Day);
-export const Week: IntervalCtor = (n) => Interval(n, Unit.Week);
+export const Microsecond: CreateInterval = (n) => Interval(n, U.Microsecond);
+export const Millisecond: CreateInterval = (n) => Interval(n, U.Millisecond);
+export const Second: CreateInterval = (n) => Interval(n, U.Second);
+export const Minute: CreateInterval = (n) => Interval(n, U.Minute);
+export const Hour: CreateInterval = (n) => Interval(n, U.Hour);
+export const Day: CreateInterval = (n) => Interval(n, U.Day);
+export const Week: CreateInterval = (n) => Interval(n, U.Week);
 
-function Interval(value: number, unit: Unit): Interval {
+function Interval(value: number, unit: U): Interval {
   if (Number.isNaN(value)) {
     throw new TypeError(`Cannot create an Interval from NaN`);
   }
@@ -118,9 +133,20 @@ function Interval(value: number, unit: Unit): Interval {
     toWeeks: () => Week((value * t(unit)) / T.Week),
 
     toString(options = {}) {
-      const { mode } = options;
+      const mode = options.mode || "verbose";
+      // Use a provided separator or
+      // use a space for verbose string or
+      // use no space for abbreviated string.
+      const separator =
+        typeof options.separator === "string"
+          ? options.separator
+          : mode === "verbose"
+          ? " "
+          : "";
+
       const label = unitLabels[mode || "verbose"][unit];
-      return `${value} ${label}`;
+
+      return value.toString(10) + separator + label;
     },
 
     valueOf: () => value,
@@ -130,27 +156,27 @@ function Interval(value: number, unit: Unit): Interval {
 /**
  * Convert a unit into a time base.
  */
-function t(unit: Unit): T {
+function t(unit: U): T {
   switch (unit) {
-    case Unit.Microsecond:
+    case U.Microsecond:
       return T.Microsecond;
 
-    case Unit.Millisecond:
+    case U.Millisecond:
       return T.Millisecond;
 
-    case Unit.Second:
+    case U.Second:
       return T.Second;
 
-    case Unit.Minute:
+    case U.Minute:
       return T.Minute;
 
-    case Unit.Hour:
+    case U.Hour:
       return T.Hour;
 
-    case Unit.Day:
+    case U.Day:
       return T.Day;
 
-    case Unit.Week:
+    case U.Week:
       return T.Week;
   }
 }
