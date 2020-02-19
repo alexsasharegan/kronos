@@ -181,10 +181,18 @@ describe("Symbol.toStringTag", () => {
 });
 
 describe("Default initializers", () => {
-  const tt = [Microsecond, Millisecond, Second, Minute, Hour, Day, Week];
+  const tt = [
+    [Microsecond, "Microsecond"],
+    [Millisecond, "Millisecond"],
+    [Second, "Second"],
+    [Minute, "Minute"],
+    [Hour, "Hour"],
+    [Day, "Day"],
+    [Week, "Week"],
+  ] as const;
 
-  for (const Interval of tt) {
-    test(Interval.name, () => {
+  for (const [Interval, name] of tt) {
+    test(name, () => {
       expect(Interval).not.toThrow();
       expect(Interval().value).toBe(0);
     });
