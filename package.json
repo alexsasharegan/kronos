@@ -1,0 +1,21 @@
+{
+  "name": "@alexsasharegan/kronos",
+  "version": "1.0.0",
+  "description": "Type-safe time utils for JavaScript.",
+  "main": "dist/Interval.js",
+  "types": "dist/Interval.d.js",
+  "scripts": {
+    "prebuild": "rm -rf lib",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "author": "Alex Regan <npm-pkg.kronos@m.trcx.me>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^25.1.2",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^25.2.0",
+    "typescript": "^3.7.5"
+  }
+}
