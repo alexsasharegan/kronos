@@ -151,13 +151,7 @@ function Interval(value: number, unit: U): Interval {
       // Use a provided separator or
       // use a space for verbose string or
       // use no space for abbreviated string.
-      const separator =
-        typeof options.separator === "string"
-          ? options.separator
-          : mode === "verbose"
-          ? " "
-          : "";
-
+      const separator = options.separator ?? (mode === "verbose" ? " " : "");
       const label = unitLabels[mode || "verbose"][unit];
 
       return value.toString(10) + separator + label;
